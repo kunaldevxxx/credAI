@@ -4,72 +4,86 @@ import { Input } from "./ui/input"
 import { Button } from "./ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card"
 import SuspiciousActivityModal from './SuspiciousActivityModal';
+import { Groq } from 'groq-sdk';
 
 function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [aiQuery, setAiQuery] = useState('');
+  const [aiResponse, setAiResponse] = useState('');
 
-  const handleAIQuery = (e) => {
+  const handleAIQuery = async (e) => {
     e.preventDefault();
-    // Process AI query
-    console.log('AI Query:', aiQuery);
+    const groq = new Groq({
+      apiKey: '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',
+      dangerouslyAllowBrowser:true,
+    });
+    try {
+      const chatCompletion = await groq.chat.completions.create({
+        messages: [{ role: 'user', content: aiQuery }],
+        model: 'mixtral-8x7b-32768',
+      });
+      setAiResponse(chatCompletion.choices[0]?.message?.content || 'No response');
+    } catch (error) {
+      console.error('Error querying AI:', error);
+      setAiResponse('Error occurred while processing your query.');
+    }
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Transactions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Display recent transactions */}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>AI Insights</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Display AI-driven insights */}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Flagged Transactions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Display flagged suspicious transactions */}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Monthly Spending</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">$2,345.67</p>
-          </CardContent>
-        </Card>
+    <div className="space-y-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50">
+      <h1 className="text-4xl font-bold text-center text-indigo-800">Welcome to Your CredAI Dashboard 🏦</h1>
+
+      <div className="grid gap-8 md:grid-cols-3">
+        <DashboardCard title="Recent Transactions" emoji="💳" link="/transactions" />
+        <DashboardCard title="AI Insights" emoji="🤖" link="/ai-insights" />
+        <DashboardCard title="Recommendations" emoji="💡" link="/recommendations" />
+        <DashboardCard title="Spending Trends" emoji="📊" link="/spending-trends" />
+        <DashboardCard title="Customer Support" emoji="🎧" link="/support" />
+        <DashboardCard title="User Profile" emoji="👤" link="/profile" />
       </div>
-      <form onSubmit={handleAIQuery} className="flex gap-2">
-        <Input
-          value={aiQuery}
-          onChange={(e) => setAiQuery(e.target.value)}
-          placeholder="Ask AI about your spending..."
-        />
-        <Button type="submit">Ask AI</Button>
-      </form>
-      <div className="flex gap-4">
-        <Button asChild>
-          <Link to="/transactions">View Flagged Transactions</Link>
-        </Button>
-        <Button asChild>
-          <Link to="/spending-trends">View Spending Patterns</Link>
-        </Button>
-      </div>
+
+      <Card className="p-6 bg-white shadow-lg rounded-xl">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-indigo-700">Ask AI Assistant 🧠</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleAIQuery} className="flex gap-4">
+            <Input
+              value={aiQuery}
+              onChange={(e) => setAiQuery(e.target.value)}
+              placeholder="Ask about your finances..."
+              className="flex-grow"
+            />
+            <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white">Ask AI</Button>
+          </form>
+          {aiResponse && (
+            <div className="mt-4 p-4 bg-gray-100 rounded-md">
+              <h3 className="font-semibold mb-2">AI Response:</h3>
+              <p>{aiResponse}</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {showModal && <SuspiciousActivityModal onClose={() => setShowModal(false)} />}
     </div>
+  );
+}
+
+function DashboardCard({ title, emoji, link }) {
+  return (
+    <Link to={link}>
+      <Card className="h-full transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
+        <CardHeader>
+          <CardTitle className="text-xl font-semibold text-indigo-700 flex items-center gap-2">
+            <span className="text-3xl">{emoji}</span> {title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-gray-600">Click to view details</p>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
 

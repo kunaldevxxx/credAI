@@ -12,7 +12,7 @@ function App() {
   return (
     <Router>
       <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-4">AI Banking App</h1>
+        <h1 className="text-3xl font-bold mb-4">CredAI</h1>
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/transactions" element={<TransactionInsights />} />
@@ -21,6 +21,8 @@ function App() {
           <Route path="/spending-trends" element={<SpendingTrends />} />
           <Route path="/support" element={<CustomerSupport />} />
           <Route path="/profile" element={<UserProfile />} />
+
+
         </Routes>
       </div>
     </Router>

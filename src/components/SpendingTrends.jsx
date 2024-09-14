@@ -1,11 +1,51 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
-import { Line, Bar, Pie } from 'react-chartjs-2';
+import { Line, Bar, Pie, Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
+import { Groq } from 'groq-sdk';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend);
 
 function SpendingTrends() {
+  const [predictiveInsights, setPredictiveInsights] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPredictiveInsights = async () => {
+      
+      const groq = new Groq({
+        apiKey: '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',
+        dangerouslyAllowBrowser:true,
+      });
+
+      try {
+        const completion = await groq.chat.completions.create({
+          messages: [
+            {
+              role: "system",
+              content: "You are a financial analyst AI. Provide predictive insights based on the given spending data."
+            },
+            {
+              role: "user",
+              content: "Analyze the following spending data and provide 3 predictive insights: Monthly spending: [300, 450, 320, 500, 400, 350], Category spending: [250, 150, 100, 200, 300], Expense distribution: [60, 30, 10]"
+            }
+          ],
+          model: "mixtral-8x7b-32768",
+          temperature: 0.5,
+          max_tokens: 150,
+        });
+
+        setPredictiveInsights(completion.choices[0].message.content.split('\n'));
+      } catch (error) {
+        console.error('Error fetching predictive insights:', error);
+        setPredictiveInsights(['Unable to fetch predictive insights.']);
+      }
+      setLoading(false);
+    };
+
+    fetchPredictiveInsights();
+  }, []);
+
   // Monthly spending data
   const monthlyData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -54,10 +94,72 @@ function SpendingTrends() {
     ]
   };
 
+  // Calculate total spending
+  const totalSpending = monthlyData.datasets[0].data.reduce((a, b) => a + b, 0);
+
+  // Calculate average monthly spending
+  const averageMonthlySpending = totalSpending / monthlyData.labels.length;
+
+  // Calculate spending growth rate
+  const firstMonth = monthlyData.datasets[0].data[0];
+  const lastMonth = monthlyData.datasets[0].data[monthlyData.datasets[0].data.length - 1];
+  const spendingGrowthRate = ((lastMonth - firstMonth) / firstMonth) * 100;
+
+  // Spending forecast data
+  const spendingForecast = {
+    labels: [...monthlyData.labels, 'Jul', 'Aug', 'Sep'],
+    datasets: [
+      {
+        label: 'Actual Spending',
+        data: [...monthlyData.datasets[0].data, null, null, null],
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        tension: 0.1,
+        fill: true,
+      },
+      {
+        label: 'Forecasted Spending',
+        data: [...monthlyData.datasets[0].data, 380, 410, 440],
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        tension: 0.1,
+        fill: true,
+        borderDash: [5, 5],
+      }
+    ]
+  };
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Spending Trends</h1>
       
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Total Spending</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold text-blue-600">${totalSpending}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Average Monthly Spending</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold text-green-600">${averageMonthlySpending.toFixed(2)}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Spending Growth Rate</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold text-purple-600">{spendingGrowthRate.toFixed(2)}%</p>
+          </CardContent>
+        </Card>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>Monthly Spending Overview</CardTitle>
@@ -100,7 +202,7 @@ function SpendingTrends() {
             <CardTitle>Expense Distribution</CardTitle>
           </CardHeader>
           <CardContent>
-            <Pie 
+            <Doughnut 
               data={expenseDistribution} 
               options={{
                 responsive: true,
@@ -116,15 +218,39 @@ function SpendingTrends() {
 
       <Card>
         <CardHeader>
+          <CardTitle>Spending Forecast</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Line 
+            data={spendingForecast} 
+            options={{
+              responsive: true,
+              plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Spending Forecast' }
+              }
+            }} 
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Predictive Insights</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-lg">Based on your spending patterns, we predict:</p>
-          <ul className="list-disc list-inside mt-2 space-y-2">
-            <li>Your spending in the 'Shopping' category might increase next month.</li>
-            <li>You're on track to meet your savings goal for this quarter.</li>
-            <li>Consider reducing expenses in the 'Entertainment' category to improve your financial health.</li>
-          </ul>
+          {loading ? (
+            <p>Loading predictive insights...</p>
+          ) : (
+            <>
+              <p className="text-lg">Based on your spending patterns, our AI predicts:</p>
+              <ul className="list-disc list-inside mt-2 space-y-2">
+                {predictiveInsights.map((insight, index) => (
+                  <li key={index}>{insight}</li>
+                ))}
+              </ul>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
