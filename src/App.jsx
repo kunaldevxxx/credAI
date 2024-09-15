@@ -7,6 +7,8 @@ import RecommendationsAction from './components/RecommendationsAction';
 import SpendingTrends from './components/SpendingTrends';
 import CustomerSupport from './components/CustomerSupport';
 import UserProfile from './components/UserProfile';
+import Login from './components/Login';
+import Signup from './components/Signup';
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
           <Route path="/spending-trends" element={<SpendingTrends />} />
           <Route path="/support" element={<CustomerSupport />} />
           <Route path="/profile" element={<UserProfile />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
 
         </Routes>
