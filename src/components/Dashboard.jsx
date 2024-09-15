@@ -35,7 +35,7 @@ function Dashboard() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="space-y-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 min-h-screen"
+      className="space-y-8 p-6 rounded-md bg-gradient-to-r from-blue-50 to-indigo-50 min-h-screen"
     >
       <motion.h1 
         initial={{ scale: 0.9 }}
@@ -58,6 +58,24 @@ function Dashboard() {
         <DashboardCard title="Spending Trends" emoji="📊" link="/spending-trends" />
         <DashboardCard title="Customer Support" emoji="🎧" link="/support" />
         <DashboardCard title="User Profile" emoji="👤" link="/profile" />
+      </motion.div>
+
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
+        className="flex justify-center space-x-4 mb-4"
+      >
+        <Link to="/login">
+          <Button className="bg-indigo-600 hover:bg-indigo-700 text-white transition-colors duration-300">
+            Login
+          </Button>
+        </Link>
+        <Link to="/signup">
+          <Button className="bg-green-600 hover:bg-green-700 text-white transition-colors duration-300">
+            Sign Up
+          </Button>
+        </Link>
       </motion.div>
 
       <motion.div
