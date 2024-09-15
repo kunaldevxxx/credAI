@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from "./ui/button"
-import { Card, CardHeader, CardTitle, CardContent } from "./ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
+import { motion } from 'framer-motion';
+import { Button } from "./ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import confetti from 'canvas-confetti';
 
 function RecommendationsAction() {
@@ -86,50 +87,59 @@ function RecommendationsAction() {
     }
   };
 
-  const handleFreezeCard = () => {
-    setShowFreezeDialog(true);
-  };
-
+  const handleFreezeCard = () => setShowFreezeDialog(true);
+  
   const handleSubmitFreezeDetails = () => {
     setShowFreezeDialog(false);
     setShowOtpDialog(true);
   };
-
+  
   const handleSubmitOtp = () => {
-    if (otp === '1234') { // Replace with actual OTP validation
+    if (otp === '1234') {
       setShowOtpDialog(false);
       setFreezeStatus('success');
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
     } else {
       setFreezeStatus('error');
     }
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">AI-Driven Recommendations</h1>
-      {recommendations.map((rec) => (
-        <Card key={rec.id} className={getRecommendationColor(rec.type, rec.value)}>
-          <CardHeader>
-            <CardTitle>{rec.type.charAt(0).toUpperCase() + rec.type.slice(1)} Recommendation</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>{rec.message}</p>
-            <p className="mt-2 font-semibold">Priority: {getRecommendationPriority(rec.type, rec.value)}</p>
-          </CardContent>
-        </Card>
-      ))}
-      <div className="flex gap-4">
-        <Button onClick={() => setShowSupportDialog(true)}>Contact Support</Button>
-        <Button variant="destructive" onClick={handleFreezeCard}>Freeze Card</Button>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-lg"
+    >
+      <h1 className="text-3xl font-bold text-indigo-800">AI-Driven Recommendations</h1>
+      <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {recommendations.map((rec) => (
+          <motion.div
+            key={rec.id}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Card className={`${getRecommendationColor(rec.type, rec.value)} hover:shadow-md transition-shadow duration-300`}>
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">{rec.type.charAt(0).toUpperCase() + rec.type.slice(1)}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm">{rec.message}</p>
+                <p className="mt-2 font-semibold text-xs">Priority: {getRecommendationPriority(rec.type, rec.value)}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </motion.div>
+      <div className="flex gap-4 justify-center">
+        <Button onClick={() => setShowSupportDialog(true)} className="bg-indigo-600 hover:bg-indigo-700">Contact Support</Button>
+        <Button variant="destructive" onClick={handleFreezeCard} className="bg-red-600 hover:bg-red-700">Freeze Card</Button>
       </div>
 
+      {/* Support Dialog */}
       <Dialog open={showSupportDialog} onOpenChange={setShowSupportDialog}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Nearby Customer Care Centers</DialogTitle>
           </DialogHeader>
@@ -146,8 +156,9 @@ function RecommendationsAction() {
         </DialogContent>
       </Dialog>
 
+      {/* Freeze Card Dialog */}
       <Dialog open={showFreezeDialog} onOpenChange={setShowFreezeDialog}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Freeze Card</DialogTitle>
           </DialogHeader>
@@ -170,13 +181,14 @@ function RecommendationsAction() {
                 placeholder="Enter mobile number"
               />
             </div>
-            <Button onClick={handleSubmitFreezeDetails}>Submit</Button>
+            <Button onClick={handleSubmitFreezeDetails} className="w-full bg-[#1A80E5]">Submit</Button>
           </div>
         </DialogContent>
       </Dialog>
 
+      {/* OTP Dialog */}
       <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Enter OTP</DialogTitle>
           </DialogHeader>
@@ -190,58 +202,36 @@ function RecommendationsAction() {
                 placeholder="Enter OTP"
               />
             </div>
-            <Button onClick={handleSubmitOtp}>Submit</Button>
+            <Button onClick={handleSubmitOtp} className="w-full bg-[#1A80E5">Submit</Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      {freezeStatus === 'success' && (
-        <Dialog open={true} onOpenChange={() => setFreezeStatus('')}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Congratulations!</DialogTitle>
-            </DialogHeader>
-            <div className="mt-4">
-              <p>Your card has been successfully frozen.</p>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
+      {/* Success Dialog */}
+      <Dialog open={freezeStatus === 'success'} onOpenChange={() => setFreezeStatus('')}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Congratulations!</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            <p>Your card has been successfully frozen.</p>
+          </div>
+        </DialogContent>
+      </Dialog>
 
-      {freezeStatus === 'error' && (
-        <Dialog open={true} onOpenChange={() => setFreezeStatus('')}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Error</DialogTitle>
-            </DialogHeader>
-            <div className="mt-4">
-              <p>Wrong OTP. Please try again.</p>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
-    </div>
+      {/* Error Dialog */}
+      <Dialog open={freezeStatus === 'error'} onOpenChange={() => setFreezeStatus('')}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Error</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            <p>Wrong OTP. Please try again.</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </motion.div>
   );
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export default RecommendationsAction;
-
