@@ -4,7 +4,7 @@ import { Button } from "./ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card"
 import { Line } from 'react-chartjs-2';
 import { Groq } from 'groq-sdk';
-
+import { apiKey } from '../../apiConfig.js';
 function AIQueryInsights() {
   const [query, setQuery] = useState('');
   const [chartData, setChartData] = useState(null);
@@ -25,8 +25,8 @@ function AIQueryInsights() {
 
     try {
       const groq = new Groq({
-        apiKey: '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',
-        dangerouslyAllowBrowser:true,
+        apiKey: apiKey,
+        dangerouslyAllowBrowser: true,
       });
 
       const aiResponse = await groq.chat.completions.create({

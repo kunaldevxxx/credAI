@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import { Line, Bar, Pie, Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 import { Groq } from 'groq-sdk';
-
+import { apiKey } from '../../apiConfig.js';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend);
 
 function SpendingTrends() {
@@ -12,10 +12,10 @@ function SpendingTrends() {
 
   useEffect(() => {
     const fetchPredictiveInsights = async () => {
-      
+
       const groq = new Groq({
-        apiKey: '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',
-        dangerouslyAllowBrowser:true,
+        apiKey: apiKey,
+        dangerouslyAllowBrowser: true,
       });
 
       try {
@@ -132,7 +132,7 @@ function SpendingTrends() {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Spending Trends</h1>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
@@ -165,15 +165,15 @@ function SpendingTrends() {
           <CardTitle>Monthly Spending Overview</CardTitle>
         </CardHeader>
         <CardContent>
-          <Line 
-            data={monthlyData} 
+          <Line
+            data={monthlyData}
             options={{
               responsive: true,
               plugins: {
                 legend: { position: 'top' },
                 title: { display: true, text: 'Monthly Spending Trend' }
               }
-            }} 
+            }}
           />
         </CardContent>
       </Card>
@@ -184,15 +184,15 @@ function SpendingTrends() {
             <CardTitle>Spending by Category</CardTitle>
           </CardHeader>
           <CardContent>
-            <Bar 
-              data={categoryData} 
+            <Bar
+              data={categoryData}
               options={{
                 responsive: true,
                 plugins: {
                   legend: { position: 'top' },
                   title: { display: true, text: 'Spending by Category' }
                 }
-              }} 
+              }}
             />
           </CardContent>
         </Card>
@@ -202,15 +202,15 @@ function SpendingTrends() {
             <CardTitle>Expense Distribution</CardTitle>
           </CardHeader>
           <CardContent>
-            <Doughnut 
-              data={expenseDistribution} 
+            <Doughnut
+              data={expenseDistribution}
               options={{
                 responsive: true,
                 plugins: {
                   legend: { position: 'top' },
                   title: { display: true, text: 'Expense Distribution' }
                 }
-              }} 
+              }}
             />
           </CardContent>
         </Card>
@@ -221,15 +221,15 @@ function SpendingTrends() {
           <CardTitle>Spending Forecast</CardTitle>
         </CardHeader>
         <CardContent>
-          <Line 
-            data={spendingForecast} 
+          <Line
+            data={spendingForecast}
             options={{
               responsive: true,
               plugins: {
                 legend: { position: 'top' },
                 title: { display: true, text: 'Spending Forecast' }
               }
-            }} 
+            }}
           />
         </CardContent>
       </Card>

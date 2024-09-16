@@ -5,15 +5,15 @@ import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "./ui/accordion";
 import { Groq } from 'groq-sdk';
-
+import { apiKey } from '../../apiConfig.js';
 function CustomerSupport() {
   const [message, setMessage] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const groq = new Groq({
-    apiKey: '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',
-    dangerouslyAllowBrowser:true,
+    apiKey: apiKey,
+    dangerouslyAllowBrowser: true,
   });
 
   const handleSendMessage = async (e) => {

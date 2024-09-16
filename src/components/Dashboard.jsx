@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import SuspiciousActivityModal from './SuspiciousActivityModal';
 import { Groq } from 'groq-sdk';
-
+import { apiKey } from '../../apiConfig.js';
 function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [aiQuery, setAiQuery] = useState('');
@@ -15,7 +15,7 @@ function Dashboard() {
   const handleAIQuery = async (e) => {
     e.preventDefault();
     const groq = new Groq({
-      apiKey: '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',
+      apiKey: apiKey,
       dangerouslyAllowBrowser: true,
     });
     try {
@@ -31,13 +31,13 @@ function Dashboard() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="space-y-8 p-6 rounded-md bg-gradient-to-r from-blue-50 to-indigo-50 min-h-screen"
     >
-      <motion.h1 
+      <motion.h1
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.3 }}
@@ -46,7 +46,7 @@ function Dashboard() {
         Welcome to Your CredAI Dashboard 🏦
       </motion.h1>
 
-      <motion.div 
+      <motion.div
         className="grid gap-8 md:grid-cols-3"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -100,7 +100,7 @@ function Dashboard() {
               </Button>
             </form>
             {aiResponse && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}

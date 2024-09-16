@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import confetti from 'canvas-confetti';
-
+import { apiKey } from '../../apiConfig.js';
 function RecommendationsAction() {
   const [recommendations, setRecommendations] = useState([]);
   const [showSupportDialog, setShowSupportDialog] = useState(false);
@@ -88,12 +88,12 @@ function RecommendationsAction() {
   };
 
   const handleFreezeCard = () => setShowFreezeDialog(true);
-  
+
   const handleSubmitFreezeDetails = () => {
     setShowFreezeDialog(false);
     setShowOtpDialog(true);
   };
-  
+
   const handleSubmitOtp = () => {
     if (otp === '1234') {
       setShowOtpDialog(false);
@@ -105,7 +105,7 @@ function RecommendationsAction() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
